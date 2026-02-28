@@ -3,6 +3,7 @@ import { Application, ApplicationState, STATE_LABELS } from '../types';
 import { supabase } from '../lib/supabase';
 import { dummyPreCredit, dummyEkyc, dummyPayPayPayment } from '../lib/dummyApis';
 import { CheckCircle2, XCircle, Loader2, CreditCard } from 'lucide-react';
+import { DUMMY_CONTRACT_URL, PRODUCT_NAMES } from '../config';
 
 interface CustomerFlowProps {
   onComplete?: () => void;
@@ -19,7 +20,7 @@ export function CustomerFlow({ onComplete }: CustomerFlowProps) {
     phone: '',
     birth_date: '',
     desired_amount: '',
-    product_name: 'フリーローン',
+    product_name: PRODUCT_NAMES[0] as string,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,7 +128,7 @@ export function CustomerFlow({ onComplete }: CustomerFlowProps) {
         .from('contracts')
         .insert({
           application_id: application.id,
-          contract_url: 'https://example.com/contract-dummy.pdf',
+          contract_url: DUMMY_CONTRACT_URL,
         });
 
       setApplication(updated!);
@@ -267,9 +268,9 @@ export function CustomerFlow({ onComplete }: CustomerFlowProps) {
               onChange={(e) => setFormData({ ...formData, product_name: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option>フリーローン</option>
-              <option>自動車ローン</option>
-              <option>教育ローン</option>
+              {PRODUCT_NAMES.map((name) => (
+                <option key={name}>{name}</option>
+              ))}
             </select>
           </div>
 
@@ -385,7 +386,7 @@ export function CustomerFlow({ onComplete }: CustomerFlowProps) {
               以下の契約書をご確認の上、同意いただける場合は署名してください。
             </p>
             <a
-              href="https://example.com/contract-dummy.pdf"
+              href={DUMMY_CONTRACT_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline text-sm"

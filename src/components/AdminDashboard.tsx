@@ -3,6 +3,7 @@ import { Application, STATE_LABELS } from '../types';
 import { supabase } from '../lib/supabase';
 import { dummyAntisocialCheck } from '../lib/dummyApis';
 import { RefreshCw, Eye, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { DUMMY_CONTRACT_URL } from '../config';
 
 export function AdminDashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -88,7 +89,7 @@ export function AdminDashboard() {
       if (finalDecision === 'approved') {
         await supabase.from('contracts').insert({
           application_id: selectedApp.id,
-          contract_url: 'https://example.com/contract-dummy.pdf',
+          contract_url: DUMMY_CONTRACT_URL,
         });
       }
 

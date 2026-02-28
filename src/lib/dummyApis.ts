@@ -31,7 +31,7 @@ export const dummyAntisocialCheck = async (): Promise<{
   return { passed: random > 0.05 };
 };
 
-export const dummyPayPayPayment = async (_amount: number): Promise<{
+export const dummyPayPayPayment = async (_amount: number): Promise<{ // eslint-disable-line @typescript-eslint/no-unused-vars
   success: boolean;
   transactionId: string;
 }> => {
