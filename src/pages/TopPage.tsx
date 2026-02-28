@@ -11,24 +11,31 @@ export function TopPage() {
   /** [PoC] デモ用: S01 申込を生成して申込フォームへ遷移する（LINE Webhook の代替） */
   const handleDemoStart = async () => {
     setDemoLoading(true);
-    const { data, error } = await supabase
-      .from('applications')
-      .insert({
-        line_user_id: 'demo-' + Date.now(),
-        state: 'S01',
-        email: '',
-        phone: '',
-        birth_date: '2000-01-01',
-        desired_amount: 0,
-        product_name: '',
-        credit_limit: 0,
-      })
-      .select('id')
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('applications')
+        .insert({
+          line_user_id: 'demo-' + Date.now(),
+          state: 'S01',
+          email: '',
+          phone: '',
+          birth_date: '2000-01-01',
+          desired_amount: 0,
+          product_name: '',
+          credit_limit: 0,
+        })
+        .select('id')
+        .single();
 
-    setDemoLoading(false);
-    if (!error && data) {
-      navigate(`/apply/${data.id}`);
+      if (!error && data) {
+        navigate(`/apply/${data.id}`);
+      } else {
+        console.error('[TopPage] demo insert error:', error?.message ?? 'unknown error');
+      }
+    } catch (err) {
+      console.error('[TopPage] demo start failed:', err instanceof Error ? err.message : 'unknown error');
+    } finally {
+      setDemoLoading(false);
     }
   };
 
