@@ -4,7 +4,9 @@ import { supabase } from '../../lib/supabase';
 import { dummyAntisocialCheck } from '../../lib/dummyApis';
 import { DUMMY_CONTRACT_URL } from '../../config';
 import { Application, StateTransition, STATE_LABELS } from '../../types';
-import { Loader2, ArrowLeft, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { Loader2, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { ErrorBanner } from '../../components/ui/ErrorBanner';
+import { Toast } from '../../components/ui/Toast';
 
 /** /admin/applications/:id: 申込詳細・審査入力・タイムアウト操作 */
 export function AdminDetailPage() {
@@ -165,18 +167,8 @@ export function AdminDetailPage() {
           一覧へ戻る
         </button>
 
-        {successMessage && (
-          <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
-            <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-            {successMessage}
-          </div>
-        )}
-        {errorMessage && (
-          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            <XCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-            {errorMessage}
-          </div>
-        )}
+        {successMessage && <Toast message={successMessage} />}
+        {errorMessage && <ErrorBanner message={errorMessage} />}
 
         {/* 申込情報 */}
         <div className="bg-white rounded-lg shadow-sm p-6">

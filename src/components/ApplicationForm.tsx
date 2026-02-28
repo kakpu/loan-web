@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { dummyPreCredit } from '../lib/dummyApis';
 import { PRODUCT_NAMES } from '../config';
 import { Loader2 } from 'lucide-react';
+import { ErrorBanner } from './ui/ErrorBanner';
 
 interface Props {
   /** LINE Webhook または TopPage のデモボタンで事前生成した申込ID */
@@ -232,11 +233,7 @@ export function ApplicationForm({ applicationId }: Props) {
           </select>
         </div>
 
-        {submitError && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
-            {submitError}
-          </div>
-        )}
+        {submitError && <ErrorBanner message={submitError} />}
 
         <button
           type="submit"

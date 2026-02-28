@@ -3,6 +3,7 @@ import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { dummyEkyc, dummyAntisocialCheck } from '../../lib/dummyApis';
 import { Loader2, ShieldCheck, FileText } from 'lucide-react';
+import { ErrorBanner } from '../../components/ui/ErrorBanner';
 
 /** S04: 本人確認案内。eKYC + 反社チェック（PoC ダミー）を実行して S05 または S99 へ遷移。 */
 export function IdentityPage() {
@@ -82,11 +83,7 @@ export function IdentityPage() {
             </div>
           </div>
 
-          {submitError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm mb-4">
-              {submitError}
-            </div>
-          )}
+          {submitError && <ErrorBanner message={submitError} />}
 
           <button
             onClick={handleUpload}

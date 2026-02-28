@@ -5,6 +5,7 @@ import { dummyPayPayPayment } from '../../lib/dummyApis';
 import { DUMMY_CONTRACT_URL } from '../../config';
 import { Application } from '../../types';
 import { Loader2, FileCheck, ExternalLink } from 'lucide-react';
+import { ErrorBanner } from '../../components/ui/ErrorBanner';
 
 /** S06: 契約書確認・署名。同意後に PayPay ダミー決済を実行して S07 へ遷移。 */
 export function ContractPage() {
@@ -122,11 +123,7 @@ export function ContractPage() {
             </span>
           </label>
 
-          {submitError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm mb-4">
-              {submitError}
-            </div>
-          )}
+          {submitError && <ErrorBanner message={submitError} />}
 
           <button
             onClick={handleSign}

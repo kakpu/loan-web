@@ -3,6 +3,7 @@ import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { Application } from '../../types';
 import { Loader2, CheckCircle } from 'lucide-react';
+import { ErrorBanner } from '../../components/ui/ErrorBanner';
 
 /** S03: 即時与信結果・希望額確認。与信通過時のみ表示される。 */
 export function CreditPage() {
@@ -106,11 +107,7 @@ export function CreditPage() {
             ※ 本与信結果は仮のものです。本審査の結果によって変更になる場合があります。
           </p>
 
-          {submitError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm mb-4">
-              {submitError}
-            </div>
-          )}
+          {submitError && <ErrorBanner message={submitError} />}
 
           <button
             onClick={handleNext}
