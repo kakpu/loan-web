@@ -1,9 +1,36 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, UserCog } from 'lucide-react';
+import { Users, UserCog, Loader2 } from 'lucide-react';
 import { LINE_ADD_FRIEND_URL } from '../config';
+import { supabase } from '../lib/supabase';
 
 export function TopPage() {
   const navigate = useNavigate();
+  const [demoLoading, setDemoLoading] = useState(false);
+
+  /** [PoC] デモ用: S01 申込を生成して申込フォームへ遷移する（LINE Webhook の代替） */
+  const handleDemoStart = async () => {
+    setDemoLoading(true);
+    const { data, error } = await supabase
+      .from('applications')
+      .insert({
+        line_user_id: 'demo-' + Date.now(),
+        state: 'S01',
+        email: '',
+        phone: '',
+        birth_date: '2000-01-01',
+        desired_amount: 0,
+        product_name: '',
+        credit_limit: 0,
+      })
+      .select('id')
+      .single();
+
+    setDemoLoading(false);
+    if (!error && data) {
+      navigate(`/apply/${data.id}`);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -45,7 +72,28 @@ export function TopPage() {
           </button>
         </div>
 
-        <div className="mt-12 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+        {/* [PoC] デモ用申込開始ボタン（LINE Webhook 実装前の代替） */}
+        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-xs text-yellow-700 mb-3 font-medium">
+            ▼ デモ用（LINE Webhook 実装前の動作確認）
+          </p>
+          <button
+            onClick={handleDemoStart}
+            disabled={demoLoading}
+            className="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
+          >
+            {demoLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                申込を準備中...
+              </>
+            ) : (
+              'デモ申込を開始する（S01 生成）'
+            )}
+          </button>
+        </div>
+
+        <div className="mt-6 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">システム概要</h3>
           <ul className="text-xs text-gray-600 space-y-2">
             <li>• LINE起点の申込フロー（S01〜S07, S99）</li>
