@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { Loader2 } from 'lucide-react';
 
-/** 管理者ログインページ。Issue #4 で admin ロール確認を追加予定。 */
+/** 管理者ログイン。認証後に profiles.role = 'admin' を確認し、admin 以外はログアウトしてエラー表示。 */
 export function AdminLoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -16,10 +16,27 @@ export function AdminLoginPage() {
     setLoading(true);
     setError(null);
 
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (authError) {
+    if (authError || !data.user) {
       setError('メールアドレスまたはパスワードが正しくありません');
+      setLoading(false);
+      return;
+    }
+
+    // admin ロール確認
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profile?.role !== 'admin') {
+      await supabase.auth.signOut();
+      setError('管理者権限がありません');
       setLoading(false);
       return;
     }

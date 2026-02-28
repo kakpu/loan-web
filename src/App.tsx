@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import { TopPage } from './pages/TopPage';
 import { ApplyRedirect } from './pages/customer/ApplyRedirect';
 import { FormPage } from './pages/customer/FormPage';
@@ -15,44 +16,46 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* トップ */}
-        <Route path="/" element={<TopPage />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* トップ */}
+          <Route path="/" element={<TopPage />} />
 
-        {/* 顧客向け: /apply/:id でstate を読み取り各ページへリダイレクト */}
-        <Route path="/apply/:id" element={<ApplyRedirect />} />
-        <Route path="/apply/:id/form" element={<FormPage />} />
-        <Route path="/apply/:id/credit" element={<CreditPage />} />
-        <Route path="/apply/:id/identity" element={<IdentityPage />} />
-        <Route path="/apply/:id/waiting" element={<WaitingPage />} />
-        <Route path="/apply/:id/contract" element={<ContractPage />} />
-        <Route path="/apply/:id/complete" element={<CompletePage />} />
-        <Route path="/apply/:id/rejected" element={<RejectedPage />} />
+          {/* 顧客向け: /apply/:id でstate を読み取り各ページへリダイレクト */}
+          <Route path="/apply/:id" element={<ApplyRedirect />} />
+          <Route path="/apply/:id/form" element={<FormPage />} />
+          <Route path="/apply/:id/credit" element={<CreditPage />} />
+          <Route path="/apply/:id/identity" element={<IdentityPage />} />
+          <Route path="/apply/:id/waiting" element={<WaitingPage />} />
+          <Route path="/apply/:id/contract" element={<ContractPage />} />
+          <Route path="/apply/:id/complete" element={<CompletePage />} />
+          <Route path="/apply/:id/rejected" element={<RejectedPage />} />
 
-        {/* 管理者向け */}
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <AdminListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/applications/:id"
-          element={
-            <ProtectedRoute>
-              <AdminDetailPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* 管理者向け */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/applications/:id"
+            element={
+              <ProtectedRoute>
+                <AdminDetailPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* 未定義パス → トップへ */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* 未定義パス → トップへ */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

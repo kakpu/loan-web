@@ -1,19 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
-/** 未認証ユーザーを /admin/login へリダイレクトするガード。Issue #4 で admin ロール確認を追加する。 */
+/** 未認証または admin ロール以外のユーザーを /admin/login へリダイレクトするガード。 */
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setAuthenticated(!!session);
-      setLoading(false);
-    });
-  }, []);
+  const { user, role, loading } = useAuth();
 
   if (loading) {
     return (
@@ -23,7 +14,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!authenticated) return <Navigate to="/admin/login" replace />;
+  if (!user || role !== 'admin') return <Navigate to="/admin/login" replace />;
 
   return <>{children}</>;
 }
