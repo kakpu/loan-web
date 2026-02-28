@@ -1,100 +1,58 @@
-import { useState } from 'react';
-import { CustomerFlow } from './components/CustomerFlow';
-import { AdminDashboard } from './components/AdminDashboard';
-import { Users, UserCog } from 'lucide-react';
-
-type View = 'home' | 'customer' | 'admin';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { TopPage } from './pages/TopPage';
+import { ApplyRedirect } from './pages/customer/ApplyRedirect';
+import { FormPage } from './pages/customer/FormPage';
+import { CreditPage } from './pages/customer/CreditPage';
+import { IdentityPage } from './pages/customer/IdentityPage';
+import { WaitingPage } from './pages/customer/WaitingPage';
+import { ContractPage } from './pages/customer/ContractPage';
+import { CompletePage } from './pages/customer/CompletePage';
+import { RejectedPage } from './pages/customer/RejectedPage';
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
+import { AdminListPage } from './pages/admin/AdminListPage';
+import { AdminDetailPage } from './pages/admin/AdminDetailPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
-  const [currentView, setCurrentView] = useState<View>('home');
-
-  if (currentView === 'customer') {
-    return (
-      <div className="min-h-screen bg-gray-100 py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <button
-            onClick={() => setCurrentView('home')}
-            className="mb-4 text-sm text-gray-600 hover:text-gray-800"
-          >
-            ← ホームに戻る
-          </button>
-          <CustomerFlow onComplete={() => setCurrentView('home')} />
-        </div>
-      </div>
-    );
-  }
-
-  if (currentView === 'admin') {
-    return (
-      <div className="min-h-screen bg-gray-100 py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <button
-            onClick={() => setCurrentView('home')}
-            className="mb-4 text-sm text-gray-600 hover:text-gray-800"
-          >
-            ← ホームに戻る
-          </button>
-          <AdminDashboard />
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-3">
-            Webローン申込システム
-          </h1>
-          <p className="text-gray-600">PoC デモ環境</p>
-        </div>
+    <BrowserRouter>
+      <Routes>
+        {/* トップ */}
+        <Route path="/" element={<TopPage />} />
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <button
-            onClick={() => setCurrentView('customer')}
-            className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 group"
-          >
-            <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
-                <Users className="w-8 h-8 text-blue-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800 mb-2">お客様向け</h2>
-              <p className="text-sm text-gray-600">
-                ローン申込から契約・決済までの流れを体験できます
-              </p>
-            </div>
-          </button>
+        {/* 顧客向け: /apply/:id でstate を読み取り各ページへリダイレクト */}
+        <Route path="/apply/:id" element={<ApplyRedirect />} />
+        <Route path="/apply/:id/form" element={<FormPage />} />
+        <Route path="/apply/:id/credit" element={<CreditPage />} />
+        <Route path="/apply/:id/identity" element={<IdentityPage />} />
+        <Route path="/apply/:id/waiting" element={<WaitingPage />} />
+        <Route path="/apply/:id/contract" element={<ContractPage />} />
+        <Route path="/apply/:id/complete" element={<CompletePage />} />
+        <Route path="/apply/:id/rejected" element={<RejectedPage />} />
 
-          <button
-            onClick={() => setCurrentView('admin')}
-            className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 group"
-          >
-            <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-200 transition-colors">
-                <UserCog className="w-8 h-8 text-green-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800 mb-2">管理者向け</h2>
-              <p className="text-sm text-gray-600">
-                申込の管理・審査処理を行うことができます
-              </p>
-            </div>
-          </button>
-        </div>
+        {/* 管理者向け */}
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/applications/:id"
+          element={
+            <ProtectedRoute>
+              <AdminDetailPage />
+            </ProtectedRoute>
+          }
+        />
 
-        <div className="mt-12 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">システム概要</h3>
-          <ul className="text-xs text-gray-600 space-y-2">
-            <li>• LINE起点の申込フロー（デモではLINE ID自動生成）</li>
-            <li>• 即時与信（ダミーAPI）による借入可能額の提示</li>
-            <li>• 本人確認・マニュアル審査プロセス</li>
-            <li>• 契約書の確認・署名機能</li>
-            <li>• PayPay決済連携（デモ実装）</li>
-            <li>• 業務状態管理（S01〜S07, S99）</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+        {/* 未定義パス → トップへ */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
